@@ -4,7 +4,7 @@
 
     <groupId>com.wixpress.openrest</groupId>
     <artifactId>wix-restaurants-availability-all</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Wix Restaurants Availability Framework</name>
     <url>${project_url}/${project.artifactId}</url>
