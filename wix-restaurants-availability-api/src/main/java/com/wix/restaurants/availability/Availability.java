@@ -1,13 +1,15 @@
 package com.wix.restaurants.availability;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A time availability schedule.
@@ -27,27 +29,19 @@ public class Availability implements Serializable, Cloneable {
     
     @Override
 	public Object clone() {
-    	final List<WeeklyTimeWindow> clonedWeekly;
-    	if (weekly != null) {
-    		clonedWeekly = new ArrayList<WeeklyTimeWindow>(weekly.size());
-    		for (WeeklyTimeWindow w : weekly) {
-    			clonedWeekly.add((WeeklyTimeWindow) w.clone());
-    		}
-    	} else {
-    		clonedWeekly = null;
-    	}
-    	
-    	final List<DateTimeWindow> clonedExceptions;
-    	if (exceptions != null) {
-    		clonedExceptions = new ArrayList<DateTimeWindow>(exceptions.size());
-    		for (DateTimeWindow w : exceptions) {
-    			clonedExceptions.add((DateTimeWindow) w.clone());
-    		}
-    	} else {
-    		clonedExceptions = null;
-    	}
-    	
-    	return new Availability(clonedWeekly, clonedExceptions);
+		return new Availability(WeeklyTimeWindow.clone(weekly), DateTimeWindow.clone(exceptions));
+	}
+
+	public static Map<String, Availability> clone(Map<String, Availability> availabilities) {
+		if (availabilities == null) {
+			return null;
+		}
+
+		final Map<String, Availability> cloned = new LinkedHashMap<>(availabilities.size());
+		for (Entry<String, Availability> entry : availabilities.entrySet()) {
+			cloned.put(entry.getKey(), ((entry.getValue() != null) ? (Availability) entry.getValue().clone() : null));
+		}
+		return cloned;
 	}
     
     /** Weekly availability times. */

@@ -1,14 +1,11 @@
 package com.wix.restaurants.availability;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.io.Serializable;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DateTimeWindow implements Serializable, Cloneable {
@@ -54,7 +51,19 @@ public class DateTimeWindow implements Serializable, Cloneable {
     			((end != null) ? (Date) end.clone() : null),
     			available,
     			reason,
-    			((comment != null) ? new HashMap<String, String>(comment) : null));
+    			((comment != null) ? new HashMap<>(comment) : null));
+	}
+
+	public static List<DateTimeWindow> clone(List<DateTimeWindow> windows) {
+		if (windows == null) {
+			return null;
+		}
+
+		final List<DateTimeWindow> cloned = new ArrayList<>(windows.size());
+		for (DateTimeWindow window : windows) {
+			cloned.add((window != null) ? (DateTimeWindow) window.clone() : null);
+		}
+		return cloned;
 	}
 
     public Calendar start(TimeZone tz) {
@@ -80,7 +89,7 @@ public class DateTimeWindow implements Serializable, Cloneable {
     
     /** Additional reason information (localized free-text). */
     @JsonInclude(Include.NON_DEFAULT)
-    public Map<String, String> comment = new HashMap<String, String>();
+    public Map<String, String> comment = new LinkedHashMap<>();
     
     @Override
 	public int hashCode() {

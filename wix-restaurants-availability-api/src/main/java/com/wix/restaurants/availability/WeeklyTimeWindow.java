@@ -1,10 +1,12 @@
 package com.wix.restaurants.availability;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeeklyTimeWindow implements Serializable, Cloneable {
@@ -33,6 +35,19 @@ public class WeeklyTimeWindow implements Serializable, Cloneable {
 	public Object clone() {
     	return new WeeklyTimeWindow(minuteOfWeek, durationMins);
 	}
+
+	public static List<WeeklyTimeWindow> clone(List<WeeklyTimeWindow> windows) {
+		if (windows == null) {
+			return null;
+		}
+
+		final List<WeeklyTimeWindow> cloned = new ArrayList<>(windows.size());
+		for (WeeklyTimeWindow window : windows) {
+			cloned.add((window != null) ? (WeeklyTimeWindow) window.clone() : null);
+		}
+		return cloned;
+	}
+
 
     @JsonInclude(Include.NON_NULL)
     public Integer minuteOfWeek;
