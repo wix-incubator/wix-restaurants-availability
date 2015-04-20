@@ -1,15 +1,11 @@
 package com.wix.restaurants.availability;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 public class DateTimeWindowsIterator implements Iterator<Status> {
 	private final TimeZone tz;
 	private final Index index;
+	private final boolean lastWindowUntilForever;
 	
 	public DateTimeWindowsIterator(Calendar cal, List<DateTimeWindow> timeWindows) {
 		if (timeWindows == null) {
@@ -21,34 +17,32 @@ public class DateTimeWindowsIterator implements Iterator<Status> {
 		
 		if (!timeWindows.isEmpty()) {
 			final DateTimeWindow timeWindow = DateTimeWindow.create(cal, null);
-			final int searchIndex = Collections.binarySearch(timeWindows, timeWindow,
-					new Comparator<DateTimeWindow>() {
-				@Override
-				public int compare(DateTimeWindow o1, DateTimeWindow o2) {
-					if (!o1.end(tz).after(o2.start(tz))) {
-						return -1;
-					}
-					if (!o2.end(tz).after(o1.start(tz))) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			
+			final int searchIndex = Collections.binarySearch(timeWindows, timeWindow, new DateTimeWindowComparator(tz));
+
 			if (searchIndex >= 0) {
 				index = new Index(searchIndex, false);
 			} else {
 				final int insertionIndex = -searchIndex - 1;
 				index = new Index(insertionIndex, true);
 			}
+			lastWindowUntilForever = (timeWindows.get(timeWindows.size() - 1).end == null);
 		} else {
 			index = new Index(0, true);
+			lastWindowUntilForever = false;
 		}
+	}
+
+	private static java.util.Date toJavaDate(Calendar cal) {
+		return ((cal != null) ? cal.getTime() : null);
 	}
 
 	@Override
 	public boolean hasNext() {
-		return ((index.isDummyBefore()) || (index.index() < timeWindows.size()));
+		if (index.index() < timeWindows.size()) {
+			return true;
+		}
+
+		return (index.isDummyBefore() && !lastWindowUntilForever);
 	}
 
 	@Override
@@ -61,10 +55,10 @@ public class DateTimeWindowsIterator implements Iterator<Status> {
 			final DateTimeWindow nextTimeWindow = timeWindows.get(index.index());
 			if (!index.isDummyBefore) {
 				return new Status(
-						(nextTimeWindow.available.booleanValue() ? Status.STATUS_AVAILABLE : Status.STATUS_UNAVAILABLE),
-						nextTimeWindow.end(tz).getTime(), nextTimeWindow.reason, nextTimeWindow.comment);
+						(nextTimeWindow.available ? Status.STATUS_AVAILABLE : Status.STATUS_UNAVAILABLE),
+						toJavaDate(nextTimeWindow.end(tz)), nextTimeWindow.reason, nextTimeWindow.comment);
 			} else {
-				return new Status(Status.STATUS_UNKNOWN, nextTimeWindow.start(tz).getTime());
+				return new Status(Status.STATUS_UNKNOWN, toJavaDate(nextTimeWindow.start(tz)));
 			}
 		} finally {
 			index.advance();

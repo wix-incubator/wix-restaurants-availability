@@ -67,16 +67,18 @@ public class DateTimeWindow implements Serializable, Cloneable {
 	}
 
     public Calendar start(TimeZone tz) {
-        return start.calendar(tz);
+        return ((start != null) ? start.calendar(tz) : null);
     }
 
     public Calendar end(TimeZone tz) {
-        return end.calendar(tz);
+        return ((end != null) ? end.calendar(tz) : null);
     }
 
+	/** Start date, inclusive (null means "since forever"). */
     @JsonInclude(Include.NON_NULL)
     public Date start;
 
+	/** End date, exclusive (null means "until forever"). */
     @JsonInclude(Include.NON_NULL)
     public Date end;
 
@@ -95,8 +97,7 @@ public class DateTimeWindow implements Serializable, Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((available == null) ? 0 : available.hashCode());
+		result = prime * result + ((available == null) ? 0 : available.hashCode());
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		result = prime * result + ((end == null) ? 0 : end.hashCode());
 		result = prime * result + ((reason == null) ? 0 : reason.hashCode());

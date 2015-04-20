@@ -37,7 +37,52 @@ public class DateTimeWindowsIteratorTest {
 		tester.assertLastStatus(Status.STATUS_UNKNOWN);
 		tester.assertDone();
 	}
-	
+
+	@Test
+	public void testOneWindowSinceForever() {
+		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 0);
+		final List<DateTimeWindow> timeWindows = Arrays.asList(new DateTimeWindow[] {
+				when(cal, Calendar.DAY_OF_MONTH, 1, Boolean.TRUE)
+		});
+		timeWindows.get(0).start = null;
+
+		final StatusIteratorTester tester = new StatusIteratorTester(
+				new DateTimeWindowsIterator(cal, timeWindows), cal);
+
+		tester.assertNextStatus(Status.STATUS_AVAILABLE, Calendar.DAY_OF_MONTH, 1);
+		tester.assertLastStatus(Status.STATUS_UNKNOWN);
+		tester.assertDone();
+	}
+
+	@Test
+	public void testOneWindowUntilForever() {
+		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 0);
+		final List<DateTimeWindow> timeWindows = Arrays.asList(new DateTimeWindow[] {
+				when(cal, Calendar.DAY_OF_MONTH, 1, Boolean.TRUE)
+		});
+		timeWindows.get(0).end = null;
+
+		final StatusIteratorTester tester = new StatusIteratorTester(
+				new DateTimeWindowsIterator(cal, timeWindows), cal);
+
+		tester.assertLastStatus(Status.STATUS_AVAILABLE);
+		tester.assertDone();
+	}
+
+	@Test
+	public void testOneWindowSinceForeverAndUntilForever() {
+		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 0);
+		final List<DateTimeWindow> timeWindows = Arrays.asList(new DateTimeWindow[] {
+				new DateTimeWindow((Date)null, null, Boolean.TRUE)
+		});
+
+		final StatusIteratorTester tester = new StatusIteratorTester(
+				new DateTimeWindowsIterator(cal, timeWindows), cal);
+
+		tester.assertLastStatus(Status.STATUS_AVAILABLE);
+		tester.assertDone();
+	}
+
 	@Test
 	public void testImmediateOneDay() {
 		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 0);
