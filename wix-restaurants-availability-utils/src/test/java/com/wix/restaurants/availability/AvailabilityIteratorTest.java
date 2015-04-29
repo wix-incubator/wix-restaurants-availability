@@ -99,7 +99,40 @@ public class AvailabilityIteratorTest {
 		tester.assertNextStatus(Status.STATUS_UNAVAILABLE, Calendar.DAY_OF_MONTH, 1);
 		tester.assertNextStatus(Status.STATUS_AVAILABLE, Calendar.DAY_OF_MONTH, 2);
 	}
-	
+
+	@Test
+	public void testFullWeeklyAndExceptionUntilForever() {
+		cal.set(2010, Calendar.DECEMBER, 13, 0, 0, 0);
+		final List<DateTimeWindow> exceptions = Arrays.asList(new DateTimeWindow[] {
+				when(cal, Calendar.DAY_OF_MONTH, 1, Boolean.FALSE)
+		});
+		exceptions.get(0).end = null;
+
+		final StatusIteratorTester tester = new StatusIteratorTester(
+				new AvailabilityIterator(cal, new Availability(null, exceptions)), cal);
+
+		tester.assertLastStatus(Status.STATUS_UNAVAILABLE);
+		tester.assertDone();
+	}
+
+	@Test
+	public void testPartialWeeklyAndExceptionUntilForever() {
+		cal.set(2010, Calendar.DECEMBER, 13, 0, 0, 0);
+		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
+				new WeeklyTimeWindow(WeeklyTimeWindow.SUNDAY, WeeklyTimeWindow.DAY)
+		});
+		final List<DateTimeWindow> exceptions = Arrays.asList(new DateTimeWindow[] {
+				when(cal, Calendar.DAY_OF_MONTH, 1, Boolean.FALSE)
+		});
+		exceptions.get(0).end = null;
+
+		final StatusIteratorTester tester = new StatusIteratorTester(
+				new AvailabilityIterator(cal, new Availability(null, exceptions)), cal);
+
+		tester.assertLastStatus(Status.STATUS_UNAVAILABLE);
+		tester.assertDone();
+	}
+
 	private static DateTimeWindow when(Calendar start, int field, int amount, Boolean available) {
 		final Calendar end = (Calendar) start.clone();
 		end.add(field, amount);

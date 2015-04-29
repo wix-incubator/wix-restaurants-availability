@@ -28,7 +28,7 @@ class TimeWindowsIterator implements Iterator<Status> {
 	@Override
 	public Status next() {
 		// Future has no exceptions?
-		if (exceptionStatus.until == null) {
+		if ((Status.STATUS_UNKNOWN.equals(exceptionStatus.status)) && (exceptionStatus.until == null)) {
 			// Continue with regular statuses
 			final Status lastRegularStatus = regularStatus;
 			if (regularIt.hasNext()) {
@@ -43,6 +43,12 @@ class TimeWindowsIterator implements Iterator<Status> {
 
 		// Real exceptions take precedent
 		if (!Status.STATUS_UNKNOWN.equals(exceptionStatus.status)) {
+			// If the exception is indefinite, it trumps everything else
+			if (exceptionStatus.until == null) {
+				hasNext = false;
+				return exceptionStatus;
+			}
+
 			final Status lastExceptionStatus = exceptionStatus;
 			exceptionStatus = exceptionsIt.next(); // we know there are still real exceptions later
 
