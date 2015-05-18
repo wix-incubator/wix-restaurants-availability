@@ -1,15 +1,11 @@
 package com.wix.restaurants.availability;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.io.Serializable;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Status implements Serializable, Cloneable {
@@ -23,7 +19,7 @@ public class Status implements Serializable, Cloneable {
     public static final String STATUS_UNKNOWN = "unknown";
     
     /** All known statuses. */
-    public static final Set<String> ALL_STATUSES = new HashSet<String>(Arrays.asList(new String[] {
+    public static final Set<String> ALL_STATUSES = new HashSet<>(Arrays.asList(new String[] {
     		STATUS_AVAILABLE, STATUS_UNAVAILABLE
     }));
     
@@ -46,7 +42,7 @@ public class Status implements Serializable, Cloneable {
 	@Override
 	public Object clone() {
 		return new Status(status, until(), reason,
-				((comment != null) ? new HashMap<String, String>(comment) : null));
+				((comment != null) ? new LinkedHashMap<>(comment) : null));
 	}
 
     public java.util.Date until() {
@@ -63,13 +59,13 @@ public class Status implements Serializable, Cloneable {
     @JsonInclude(Include.NON_NULL)
     public Long until;
     
-    /** @see DateTimeWindow.reason */
+    /** @see DateTimeWindow#reason */
     @JsonInclude(Include.NON_NULL)
     public String reason;
 
-    /** @see DateTimeWindow.comment */
+    /** @see DateTimeWindow#comment */
     @JsonInclude(Include.NON_DEFAULT)
-    public Map<String, String> comment = new HashMap<String, String>();
+    public Map<String, String> comment = new LinkedHashMap<>();
     
     @Override
 	public int hashCode() {
