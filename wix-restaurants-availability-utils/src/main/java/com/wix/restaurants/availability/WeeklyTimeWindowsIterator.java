@@ -105,6 +105,8 @@ public class WeeklyTimeWindowsIterator implements Iterator<Status> {
 		cal.add(Calendar.DAY_OF_MONTH, daysToAdvance);
 		cal.add(Calendar.HOUR_OF_DAY, hoursToAdvance);
 		cal.add(Calendar.MINUTE, minutesToAdvance);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
 	}
 	
 	@Override

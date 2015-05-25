@@ -36,7 +36,7 @@ public class WeeklyTimeWindowsIteratorTest {
 		tester.assertLastStatus(Status.STATUS_AVAILABLE);
 		tester.assertDone();
 	}
-	
+
 	@Test
 	public void testSundayOnly() {
 		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 0);
@@ -46,11 +46,27 @@ public class WeeklyTimeWindowsIteratorTest {
 
 		final StatusIteratorTester tester = new StatusIteratorTester(
 				new WeeklyTimeWindowsIterator(cal, weekly), cal);
-		
+
 		for (int i = 0; i < 100; ++i) {
 			tester.assertNextStatus(Status.STATUS_AVAILABLE, Calendar.DAY_OF_MONTH, 1);
 			tester.assertNextStatus(Status.STATUS_UNAVAILABLE, Calendar.DAY_OF_MONTH, 6);
 		}
+	}
+
+	@Test
+	public void testSundayOnlyWithSeconds() {
+		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 30);
+		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
+				new WeeklyTimeWindow(WeeklyTimeWindow.SUNDAY, WeeklyTimeWindow.DAY)
+		});
+
+        final Calendar calNoSeconds = (Calendar) cal.clone();
+        calNoSeconds.set(Calendar.SECOND, 0);
+
+		final StatusIteratorTester tester = new StatusIteratorTester(
+				new WeeklyTimeWindowsIterator(cal, weekly), calNoSeconds);
+
+		tester.assertNextStatus(Status.STATUS_AVAILABLE, Calendar.DAY_OF_MONTH, 1);
 	}
 	
 	@Test
