@@ -7,6 +7,8 @@ Examples:
 * Available Mon-Fri 10:00-22:00, Sat 11:00-22:00
 * Available 24/7, except between January 3rd 2009 18:15 and January 5th 2009 16:00
 
+A JavaScript version of this library is available [here](https://github.com/wix/availability4js).
+
 ## Usage
 TODO
 
