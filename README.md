@@ -1,11 +1,11 @@
 # Wix Restaurants Availability
 This library defines a model for weekly availability schedules (possibly with exceptions), and utility classes to quickly check for actual availability.
 
+It's used extensively by the [Wix Restaurants Java SDK](https://github.com/wix/wix-restaurants-java-sdk) to handle opening times, delivery times, menus and dishes availability, etc.
+
 Examples:
 * Available Mon-Fri 10:00-22:00, Sat 11:00-22:00
 * Available 24/7, except between January 3rd 2009 18:15 and January 5th 2009 16:00
-
-It's used extensively by the [Wix Restaurants Java SDK](https://github.com/wix/wix-restaurants-java-sdk) to handle opening times, delivery times, menus and dishes availability, etc.
 
 ## Usage
 TODO
