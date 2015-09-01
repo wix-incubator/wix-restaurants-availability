@@ -63,7 +63,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		
-		<com.fasterxml.jackson.version>2.5.3</com.fasterxml.jackson.version>
+		<com.fasterxml.jackson.version>2.6.1</com.fasterxml.jackson.version>
 		<junit.version>4.12</junit.version>
     </properties>
 	
