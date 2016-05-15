@@ -10,10 +10,14 @@
     <description>Wix Restaurants Availability modules pom</description>
 	<url>https://github.com/wix/wix-restaurants-availability</url>
 
-	<modules>
-        <module>wix-restaurants-availability-api</module>
-        <module>wix-restaurants-availability-utils</module>
-    </modules>
+
+	<parent>
+		<groupId>com.wix</groupId>
+		<artifactId>wix-oss-parent</artifactId>
+		<version>1.1.0</version>
+		<relativePath />
+	</parent>
+
 
     <developers>
         <developer>
@@ -38,130 +42,24 @@
             </roles>
         </developer>
     </developers>
-	
-	<issueManagement>
-		<url>https://github.com/wix/wix-restaurants-availability/issues</url>
-		<system>GitHub Issues</system>
-	</issueManagement>	
-	
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-			<comments>A business-friendly OSS license</comments>
-		</license>
-	</licenses>	
-	
+
+
 	<scm>
 		<url>https://github.com/wix/wix-restaurants-availability</url>
 		<connection>scm:git:git://github.com/wix/wix-restaurants-availability.git</connection>
 		<developerConnection>scm:git:git@github.com:wix/wix-restaurants-availability.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>	
-	
+		<tag>HEAD</tag>
+	</scm>
+
+
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		
-		<com.fasterxml.jackson.version>2.6.1</com.fasterxml.jackson.version>
+		<com.fasterxml.jackson.version>2.7.4</com.fasterxml.jackson.version>
 		<junit.version>4.12</junit.version>
     </properties>
-	
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>	
-	
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.5</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.4.2</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.scm</groupId>
-                        <artifactId>maven-scm-provider-gitexe</artifactId>
-                        <version>1.8.1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
 
-	<profiles>
-		<profile>
-			<id>sign-artifacts</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+
+	<modules>
+		<module>wix-restaurants-availability-api</module>
+		<module>wix-restaurants-availability-utils</module>
+	</modules>
 </project>
