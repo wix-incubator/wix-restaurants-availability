@@ -1,12 +1,14 @@
 package com.wix.restaurants.availability;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.TimeZone;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Date implements Serializable, Cloneable, Comparable<Date> {
@@ -37,8 +39,7 @@ public class Date implements Serializable, Cloneable, Comparable<Date> {
     public Calendar calendar(TimeZone tz) {
         final Calendar cal = Calendar.getInstance(tz);
         cal.clear();
-        cal.set(year.intValue(), Calendar.JANUARY + month.intValue() - 1,
-                day.intValue(), hour.intValue(), minute.intValue());
+        cal.set(year, Calendar.JANUARY + month - 1, day, hour, minute);
         return cal;
     }
     
@@ -100,6 +101,21 @@ public class Date implements Serializable, Cloneable, Comparable<Date> {
 			}
 		}
 		return result;
+	}
+
+    private static final Pattern serializedPattern = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d) (\\d\\d):(\\d\\d)$");
+
+	public static Date parse(String str) {
+        final Matcher matcher = serializedPattern.matcher(str);
+        if (matcher.matches()) {
+            return new Date(Integer.valueOf(matcher.group(1)),
+                    Integer.valueOf(matcher.group(2)),
+                    Integer.valueOf(matcher.group(3)),
+                    Integer.valueOf(matcher.group(4)),
+                    Integer.valueOf(matcher.group(5)));
+        } else {
+            throw new IllegalArgumentException("Invalid date format: " + str);
+        }
 	}
 	
 	public int compareTo(Date other) {
