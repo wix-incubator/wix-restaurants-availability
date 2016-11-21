@@ -13,11 +13,11 @@ public class DateTimeWindowsIterator implements Iterator<Status> {
 		}
 		
 		tz = cal.getTimeZone();
-		this.timeWindows = timeWindows;
+		this.timeWindows = DateTimeWindowsUtils.normalize(timeWindows);
 		
-		if (!timeWindows.isEmpty()) {
+		if (!this.timeWindows.isEmpty()) {
 			final DateTimeWindow timeWindow = DateTimeWindow.create(cal, null);
-			final int searchIndex = Collections.binarySearch(timeWindows, timeWindow, new DateTimeWindowComparator(tz));
+			final int searchIndex = Collections.binarySearch(this.timeWindows, timeWindow, new DateTimeWindowComparator(tz));
 
 			if (searchIndex >= 0) {
 				index = new Index(searchIndex, false);
@@ -25,7 +25,7 @@ public class DateTimeWindowsIterator implements Iterator<Status> {
 				final int insertionIndex = -searchIndex - 1;
 				index = new Index(insertionIndex, true);
 			}
-			lastWindowUntilForever = (timeWindows.get(timeWindows.size() - 1).end == null);
+			lastWindowUntilForever = (this.timeWindows.get(this.timeWindows.size() - 1).end == null);
 		} else {
 			index = new Index(0, true);
 			lastWindowUntilForever = false;
