@@ -13,7 +13,7 @@ public class DateTimeWindowsIterator implements Iterator<Status> {
 		}
 		
 		tz = cal.getTimeZone();
-		this.timeWindows = DateTimeWindowsUtils.normalize(timeWindows);
+		this.timeWindows = DateTimeWindowsUtils.normalize(DateTimeWindowsUtils.relevantOnly(timeWindows, cal));
 		
 		if (!this.timeWindows.isEmpty()) {
 			final DateTimeWindow timeWindow = DateTimeWindow.create(cal, null);

@@ -5,6 +5,18 @@ import java.util.*;
 public class DateTimeWindowsUtils {
     private DateTimeWindowsUtils() {}
 
+    public static List<DateTimeWindow> relevantOnly(List<DateTimeWindow> timeWindows, Calendar cal) {
+        final List<DateTimeWindow> filtered = new LinkedList<>();
+
+        for (DateTimeWindow timeWindow : timeWindows) {
+            if ((timeWindow.end == null) || cal.before(timeWindow.end(cal.getTimeZone()))) {
+                filtered.add(timeWindow);
+            }
+        }
+
+        return filtered;
+    }
+
     public static List<DateTimeWindow> normalize(List<DateTimeWindow> timeWindows) {
         boolean hasSinceForever = false;
         boolean hasUntilForever = false;

@@ -1,11 +1,8 @@
 package com.wix.restaurants.availability;
 
-//import static org.junit.Assert.*;
+import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -181,6 +178,38 @@ public class DateTimeWindowsIteratorTest {
 		tester.assertNextStatus(Status.STATUS_AVAILABLE, Calendar.DAY_OF_MONTH, 1);
 		tester.assertLastStatus(Status.STATUS_UNKNOWN);
 		tester.assertDone();
+	}
+
+	@Test
+	public void testPerformsWellWhenGivenManyPastExceptions() {
+	    final int numWindows = 100000;
+
+		final Calendar today = (Calendar) cal.clone();
+		today.set(2010, Calendar.DECEMBER, 13, 0, 0, 0);
+
+		final Calendar yesterday = (Calendar) today.clone();
+		yesterday.add(Calendar.DAY_OF_MONTH, -1);
+
+		final List<DateTimeWindow> timeWindows = new ArrayList<>(numWindows);
+		for (int i = -numWindows; i <= -1; ++i) {
+			final Calendar start = (Calendar) today.clone();
+			start.add(Calendar.DAY_OF_MONTH, i);
+
+			timeWindows.add(when(start, Calendar.DAY_OF_MONTH, 1, false));
+		}
+
+        final long before = System.currentTimeMillis();
+        {
+            final StatusIteratorTester tester = new StatusIteratorTester(
+                    new DateTimeWindowsIterator(yesterday, timeWindows), yesterday);
+
+            tester.assertNextStatus(Status.STATUS_UNAVAILABLE, Calendar.DAY_OF_MONTH, 1);
+            tester.assertLastStatus(Status.STATUS_UNKNOWN);
+            tester.assertDone();
+        }
+		final long after = System.currentTimeMillis();
+
+        assertTrue(after - before < 1000);
 	}
 
 	private static DateTimeWindow when(Calendar start, int field, int amount, Boolean available) {
