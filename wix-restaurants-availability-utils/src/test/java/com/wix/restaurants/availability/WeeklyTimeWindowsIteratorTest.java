@@ -2,10 +2,7 @@ package com.wix.restaurants.availability;
 
 //import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -116,7 +113,22 @@ public class WeeklyTimeWindowsIteratorTest {
 			tester.assertNextStatus(Status.STATUS_UNAVAILABLE, Calendar.DAY_OF_MONTH, 2);
 		}
 	}
-	
-	private static final Calendar cal = Calendar.getInstance();
+
+	@Test
+	public void testConsecutiveWindows() {
+		cal.set(2010, Calendar.DECEMBER, 15, 0, 0, 0);
+		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
+				new WeeklyTimeWindow(WeeklyTimeWindow.SUNDAY, 1 * WeeklyTimeWindow.DAY),
+				new WeeklyTimeWindow(WeeklyTimeWindow.MONDAY, 6 * WeeklyTimeWindow.DAY)
+		});
+
+		final StatusIteratorTester tester = new StatusIteratorTester(
+				new WeeklyTimeWindowsIterator(cal, weekly), cal);
+
+        tester.assertLastStatus(Status.STATUS_AVAILABLE);
+        tester.assertDone();
+	}
+
+	private static final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Jerusalem"));
 }
 

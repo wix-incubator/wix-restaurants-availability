@@ -32,6 +32,7 @@ public class WeeklyTimeWindowsIterator implements Iterator<Status> {
 		if (weekly == null) {
 			weekly = Collections.emptyList();
 		}
+		weekly = normalize(weekly);
 		this.cal = (Calendar) cal.clone();
 		
 		if (weekly.isEmpty()) {
@@ -134,6 +135,29 @@ public class WeeklyTimeWindowsIterator implements Iterator<Status> {
 		}
 		return index;
 	}
+
+	private static List<WeeklyTimeWindow> normalize(List<WeeklyTimeWindow> weekly) {
+	    final List<WeeklyTimeWindow> normalized = new ArrayList<>();
+
+	    WeeklyTimeWindow lastTimeWindow = null;
+	    for (WeeklyTimeWindow timeWindow : weekly) {
+	        if (lastTimeWindow != null) {
+	            if (lastTimeWindow.minuteOfWeek + lastTimeWindow.durationMins == timeWindow.minuteOfWeek) {
+	                lastTimeWindow.durationMins += timeWindow.durationMins;
+                } else {
+	                normalized.add(lastTimeWindow);
+	                lastTimeWindow = (WeeklyTimeWindow) timeWindow.clone();
+                }
+            } else {
+	            lastTimeWindow = (WeeklyTimeWindow) timeWindow.clone();
+            }
+        }
+        if (lastTimeWindow != null) {
+	        normalized.add(lastTimeWindow);
+        }
+
+	    return normalized;
+    }
 	
 	private static int minutesFromStartOfWeek(Calendar cal) {
 		return (cal.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY) * WeeklyTimeWindow.DAY +
