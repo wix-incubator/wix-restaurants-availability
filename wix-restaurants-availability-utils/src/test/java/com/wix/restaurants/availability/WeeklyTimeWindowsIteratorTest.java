@@ -1,22 +1,35 @@
 package com.wix.restaurants.availability;
 
-//import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class WeeklyTimeWindowsIteratorTest {
+    private static final TimeZone asiaJerusalem = TimeZone.getTimeZone("Asia/Jerusalem");
+    private static final TimeZone americaSaoPaulo = TimeZone.getTimeZone("America/Sao_Paulo");
 
-	@Before
-	public void setUp() {
-		cal.setLenient(false);
-		cal.clear();
-	}
-	
+    private static Calendar lenientCalendar(TimeZone tz, int year, int month, int date, int hourOfDay, int minute, int second) {
+        final Calendar cal = Calendar.getInstance(tz);
+        cal.setLenient(true);
+        cal.clear();
+        cal.set(year, month, date, hourOfDay, minute, second);
+        return cal;
+    }
+
+    private static Calendar calendar(TimeZone tz, int year, int month, int date, int hourOfDay, int minute, int second) {
+        final Calendar cal = Calendar.getInstance(tz);
+        cal.setLenient(false);
+        cal.clear();
+        cal.set(year, month, date, hourOfDay, minute, second);
+        return cal;
+    }
+
 	@Test
 	public void testNull() {
+        final Calendar cal = calendar(asiaJerusalem, 0, 0, 0, 0, 0, 0);
 		final StatusIteratorTester tester = new StatusIteratorTester(
 				new WeeklyTimeWindowsIterator(cal, null));
 		
@@ -26,6 +39,7 @@ public class WeeklyTimeWindowsIteratorTest {
 	
 	@Test
 	public void testEmpty() {
+        final Calendar cal = calendar(asiaJerusalem, 0, 0, 0, 0, 0, 0);
 		@SuppressWarnings("unchecked")
 		final StatusIteratorTester tester = new StatusIteratorTester(
 				new WeeklyTimeWindowsIterator(cal, Collections.EMPTY_LIST));
@@ -36,7 +50,7 @@ public class WeeklyTimeWindowsIteratorTest {
 
 	@Test
 	public void testSundayOnly() {
-		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 0);
+		final Calendar cal = calendar(asiaJerusalem, 2010, Calendar.DECEMBER, 12, 0, 0, 0);
 		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
 				new WeeklyTimeWindow(WeeklyTimeWindow.SUNDAY, WeeklyTimeWindow.DAY)
 		});
@@ -52,7 +66,7 @@ public class WeeklyTimeWindowsIteratorTest {
 
 	@Test
 	public void testSundayOnlyWithSeconds() {
-		cal.set(2010, Calendar.DECEMBER, 12, 0, 0, 30);
+        final Calendar cal = calendar(asiaJerusalem, 2010, Calendar.DECEMBER, 12, 0, 0, 30);
 		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
 				new WeeklyTimeWindow(WeeklyTimeWindow.SUNDAY, WeeklyTimeWindow.DAY)
 		});
@@ -68,7 +82,7 @@ public class WeeklyTimeWindowsIteratorTest {
 	
 	@Test
 	public void testMondayOnly() {
-		cal.set(2010, Calendar.DECEMBER, 13, 0, 0, 0);
+        final Calendar cal = calendar(asiaJerusalem, 2010, Calendar.DECEMBER, 13, 0, 0, 0);
 		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
 				new WeeklyTimeWindow(WeeklyTimeWindow.MONDAY, WeeklyTimeWindow.DAY)
 		});
@@ -84,7 +98,7 @@ public class WeeklyTimeWindowsIteratorTest {
 	
 	@Test
 	public void testStartMidWindow() {
-		cal.set(2010, Calendar.DECEMBER, 13, 12, 0, 0);
+        final Calendar cal = calendar(asiaJerusalem, 2010, Calendar.DECEMBER, 13, 12, 0, 0);
 		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
 				new WeeklyTimeWindow(WeeklyTimeWindow.MONDAY, WeeklyTimeWindow.DAY)
 		});
@@ -97,7 +111,7 @@ public class WeeklyTimeWindowsIteratorTest {
 	
 	@Test
 	public void testMondayTuesdayFriday() {
-		cal.set(2010, Calendar.DECEMBER, 13, 0, 0, 0);
+        final Calendar cal = calendar(asiaJerusalem, 2010, Calendar.DECEMBER, 13, 0, 0, 0);
 		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
 				new WeeklyTimeWindow(WeeklyTimeWindow.MONDAY, 2 * WeeklyTimeWindow.DAY),
 				new WeeklyTimeWindow(WeeklyTimeWindow.FRIDAY, WeeklyTimeWindow.DAY)
@@ -114,9 +128,38 @@ public class WeeklyTimeWindowsIteratorTest {
 		}
 	}
 
+    @Test
+    public void testDstStart() {
+	    // Clock Changes in São Paulo, São Paulo, Brazil in 2017
+        //   When local standard time is about to reach
+        //   Sunday, October 15, 2017, 00:00:00 clocks are turned forward 1 hour to
+        //   Sunday, October 15, 2017, 01:00:00 local daylight time instead.
+        final Calendar today = calendar(americaSaoPaulo,2017, Calendar.OCTOBER, 14, 0, 0, 0);
+        final Calendar tomorrow = lenientCalendar(americaSaoPaulo,2017, Calendar.OCTOBER, 15, 0, 0, 0);
+        final Calendar alsoTomorrow = calendar(americaSaoPaulo,2017, Calendar.OCTOBER, 15, 1, 0, 0);
+        final Calendar dayAfterTomorrow = calendar(americaSaoPaulo,2017, Calendar.OCTOBER, 16, 0, 0, 0);
+
+        // Sanity: verify DST start
+        assertEquals(tomorrow.getTime(), alsoTomorrow.getTime());
+
+        final WeeklyTimeWindowsIterator it = new WeeklyTimeWindowsIterator(today, Arrays.asList(new WeeklyTimeWindow[] {
+                new WeeklyTimeWindow(WeeklyTimeWindow.MONDAY, 6 * WeeklyTimeWindow.DAY)
+        }));
+
+        assertTrue(it.hasNext());
+        final Status status1 = it.next();
+        assertEquals(Status.STATUS_AVAILABLE, status1.status);
+        assertEquals(tomorrow.getTimeInMillis(), status1.until.longValue());
+
+        assertTrue(it.hasNext());
+        final Status status2 = it.next();
+        assertEquals(Status.STATUS_UNAVAILABLE, status2.status);
+        assertEquals(dayAfterTomorrow.getTimeInMillis(), status2.until.longValue());
+    }
+
 	@Test
 	public void testConsecutiveWindows() {
-		cal.set(2010, Calendar.DECEMBER, 15, 0, 0, 0);
+        final Calendar cal = calendar(asiaJerusalem, 2010, Calendar.DECEMBER, 15, 0, 0, 0);
 		final List<WeeklyTimeWindow> weekly = Arrays.asList(new WeeklyTimeWindow[] {
 				new WeeklyTimeWindow(WeeklyTimeWindow.SUNDAY, 1 * WeeklyTimeWindow.DAY),
 				new WeeklyTimeWindow(WeeklyTimeWindow.MONDAY, 6 * WeeklyTimeWindow.DAY)
@@ -128,7 +171,5 @@ public class WeeklyTimeWindowsIteratorTest {
         tester.assertLastStatus(Status.STATUS_AVAILABLE);
         tester.assertDone();
 	}
-
-	private static final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Jerusalem"));
 }
 
