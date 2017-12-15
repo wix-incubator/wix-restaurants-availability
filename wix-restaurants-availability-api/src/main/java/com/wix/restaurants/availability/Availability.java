@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +28,7 @@ public class Availability implements Serializable, Cloneable {
     public Availability() {}
     
     @Override
-	public Object clone() {
+	public Availability clone() {
 		return new Availability(WeeklyTimeWindow.clone(weekly), DateTimeWindow.clone(exceptions));
 	}
 
@@ -39,48 +39,42 @@ public class Availability implements Serializable, Cloneable {
 
 		final Map<String, Availability> cloned = new LinkedHashMap<>(availabilities.size());
 		for (Entry<String, Availability> entry : availabilities.entrySet()) {
-			cloned.put(entry.getKey(), ((entry.getValue() != null) ? (Availability) entry.getValue().clone() : null));
+			cloned.put(entry.getKey(), ((entry.getValue() != null) ? entry.getValue().clone() : null));
 		}
 		return cloned;
 	}
-    
-    /** Weekly availability times. */
-    @JsonInclude(Include.NON_DEFAULT)
-    public List<WeeklyTimeWindow> weekly = Collections.emptyList();
-    
-    /** Availability exceptions. */
-    @JsonInclude(Include.NON_DEFAULT)
-    public List<DateTimeWindow> exceptions = Collections.emptyList();
-    
-    @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((exceptions == null) ? 0 : exceptions.hashCode());
-		result = prime * result + ((weekly == null) ? 0 : weekly.hashCode());
-		return result;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Availability that = (Availability) o;
+
+		if (weekly != null ? !weekly.equals(that.weekly) : that.weekly != null) return false;
+		return exceptions != null ? exceptions.equals(that.exceptions) : that.exceptions == null;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Availability other = (Availability) obj;
-		if (exceptions == null) {
-			if (other.exceptions != null)
-				return false;
-		} else if (!exceptions.equals(other.exceptions))
-			return false;
-		if (weekly == null) {
-			if (other.weekly != null)
-				return false;
-		} else if (!weekly.equals(other.weekly))
-			return false;
-		return true;
+	public int hashCode() {
+		int result = weekly != null ? weekly.hashCode() : 0;
+		result = 31 * result + (exceptions != null ? exceptions.hashCode() : 0);
+		return result;
 	}
+
+    @Override
+    public String toString() {
+        return "Availability{" +
+                "weekly=" + weekly +
+                ", exceptions=" + exceptions +
+                '}';
+    }
+
+    /** Weekly availability times. */
+    @JsonInclude(Include.NON_DEFAULT)
+    public List<WeeklyTimeWindow> weekly = new LinkedList<>();
+    
+    /** Availability exceptions. */
+    @JsonInclude(Include.NON_DEFAULT)
+    public List<DateTimeWindow> exceptions = new LinkedList<>();
 }
