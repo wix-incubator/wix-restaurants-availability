@@ -32,7 +32,7 @@ public class WeeklyTimeWindow implements Serializable, Cloneable {
     }
     
     @Override
-	public Object clone() {
+	public WeeklyTimeWindow clone() {
     	return new WeeklyTimeWindow(minuteOfWeek, durationMins);
 	}
 
@@ -43,11 +43,36 @@ public class WeeklyTimeWindow implements Serializable, Cloneable {
 
 		final List<WeeklyTimeWindow> cloned = new ArrayList<>(windows.size());
 		for (WeeklyTimeWindow window : windows) {
-			cloned.add((window != null) ? (WeeklyTimeWindow) window.clone() : null);
+			cloned.add((window != null) ? window.clone() : null);
 		}
 		return cloned;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		WeeklyTimeWindow that = (WeeklyTimeWindow) o;
+
+		if (minuteOfWeek != null ? !minuteOfWeek.equals(that.minuteOfWeek) : that.minuteOfWeek != null) return false;
+		return durationMins != null ? durationMins.equals(that.durationMins) : that.durationMins == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = minuteOfWeek != null ? minuteOfWeek.hashCode() : 0;
+		result = 31 * result + (durationMins != null ? durationMins.hashCode() : 0);
+		return result;
+	}
+
+    @Override
+    public String toString() {
+        return "WeeklyTimeWindow{" +
+                "minuteOfWeek=" + minuteOfWeek +
+                ", durationMins=" + durationMins +
+                '}';
+    }
 
     @JsonInclude(Include.NON_NULL)
     public Integer minuteOfWeek;
@@ -58,37 +83,4 @@ public class WeeklyTimeWindow implements Serializable, Cloneable {
     public int endMinuteOfWeek() {
     	return minuteOfWeek + durationMins;
     }
-    
-    @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((durationMins == null) ? 0 : durationMins.hashCode());
-		result = prime * result
-				+ ((minuteOfWeek == null) ? 0 : minuteOfWeek.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		WeeklyTimeWindow other = (WeeklyTimeWindow) obj;
-		if (durationMins == null) {
-			if (other.durationMins != null)
-				return false;
-		} else if (!durationMins.equals(other.durationMins))
-			return false;
-		if (minuteOfWeek == null) {
-			if (other.minuteOfWeek != null)
-				return false;
-		} else if (!minuteOfWeek.equals(other.minuteOfWeek))
-			return false;
-		return true;
-	}
 }
