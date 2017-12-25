@@ -45,7 +45,7 @@ public class DateTimeWindow implements Serializable, Cloneable {
     public DateTimeWindow() {}
     
     @Override
-	protected DateTimeWindow clone() {
+	public DateTimeWindow clone() {
     	return new DateTimeWindow(
     			((start != null) ? (Date) start.clone() : null),
     			((end != null) ? (Date) end.clone() : null),
