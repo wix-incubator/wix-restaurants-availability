@@ -4,7 +4,7 @@
 
     <groupId>com.wix.restaurants</groupId>
     <artifactId>wix-restaurants-availability-all</artifactId>
-    <version>1.8.0-SNAPSHOT</version>
+    <version>1.8.0</version>
     <packaging>pom</packaging>
     <name>Wix Restaurants Availability</name>
     <description>Wix Restaurants Availability modules pom</description>
@@ -48,7 +48,7 @@
 		<url>https://github.com/wix/wix-restaurants-availability</url>
 		<connection>scm:git:git://github.com/wix/wix-restaurants-availability.git</connection>
 		<developerConnection>scm:git:git@github.com:wix/wix-restaurants-availability.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>1.8.0</tag>
 	</scm>
 
 
