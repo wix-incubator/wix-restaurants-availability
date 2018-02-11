@@ -11,12 +11,12 @@
 	<url>https://github.com/wix/wix-restaurants-availability</url>
 
 
-	<parent>
-		<groupId>com.wix</groupId>
-		<artifactId>wix-oss-parent</artifactId>
-		<version>1.2.0</version>
-		<relativePath />
-	</parent>
+    <parent>
+        <groupId>com.wix</groupId>
+        <artifactId>wix-oss-scala-parent</artifactId>
+        <version>0.47.0</version>
+        <relativePath />
+    </parent>
 
 
     <developers>
