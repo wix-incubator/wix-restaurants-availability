@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,36 +43,30 @@ public class Date implements Serializable, Cloneable, Comparable<Date> {
         cal.set(year, Calendar.JANUARY + month - 1, day, hour, minute);
         return cal;
     }
-    
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Date date = (Date) o;
+		return Objects.equals(year, date.year) &&
+				Objects.equals(month, date.month) &&
+				Objects.equals(day, date.day) &&
+				Objects.equals(hour, date.hour) &&
+				Objects.equals(minute, date.minute);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(year, month, day, hour, minute);
+	}
+
     @Override
 	public String toString() {
     	return String.format("%04d-%02d-%02d %02d:%02d",
     			year, month, day, hour, minute);
 	}
     
-    @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((day == null) ? 0 : day.hashCode());
-		result = prime * result + ((hour == null) ? 0 : hour.hashCode());
-		result = prime * result + ((minute == null) ? 0 : minute.hashCode());
-		result = prime * result + ((month == null) ? 0 : month.hashCode());
-		result = prime * result + ((year == null) ? 0 : year.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		return (compareTo((Date) obj) == 0);
-	}
-	
 	private static int compare(Integer int1, Integer int2) {
 		if (int1 != null) {
 			return ((int2 != null) ? int1.compareTo(int2) : 1);

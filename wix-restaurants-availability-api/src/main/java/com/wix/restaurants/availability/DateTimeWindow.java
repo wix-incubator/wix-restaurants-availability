@@ -70,24 +70,17 @@ public class DateTimeWindow implements Serializable, Cloneable {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-
 		DateTimeWindow that = (DateTimeWindow) o;
-
-		if (start != null ? !start.equals(that.start) : that.start != null) return false;
-		if (end != null ? !end.equals(that.end) : that.end != null) return false;
-		if (available != null ? !available.equals(that.available) : that.available != null) return false;
-		if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
-		return comment != null ? comment.equals(that.comment) : that.comment == null;
+		return Objects.equals(start, that.start) &&
+				Objects.equals(end, that.end) &&
+				Objects.equals(available, that.available) &&
+				Objects.equals(reason, that.reason) &&
+				Objects.equals(comment, that.comment);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = start != null ? start.hashCode() : 0;
-		result = 31 * result + (end != null ? end.hashCode() : 0);
-		result = 31 * result + (available != null ? available.hashCode() : 0);
-		result = 31 * result + (reason != null ? reason.hashCode() : 0);
-		result = 31 * result + (comment != null ? comment.hashCode() : 0);
-		return result;
+		return Objects.hash(start, end, available, reason, comment);
 	}
 
     @Override

@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -44,23 +41,19 @@ public class Availability implements Serializable, Cloneable {
 		return cloned;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Availability that = (Availability) o;
+        return Objects.equals(weekly, that.weekly) &&
+                Objects.equals(exceptions, that.exceptions);
+    }
 
-		Availability that = (Availability) o;
-
-		if (weekly != null ? !weekly.equals(that.weekly) : that.weekly != null) return false;
-		return exceptions != null ? exceptions.equals(that.exceptions) : that.exceptions == null;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = weekly != null ? weekly.hashCode() : 0;
-		result = 31 * result + (exceptions != null ? exceptions.hashCode() : 0);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(weekly, exceptions);
+    }
 
     @Override
     public String toString() {

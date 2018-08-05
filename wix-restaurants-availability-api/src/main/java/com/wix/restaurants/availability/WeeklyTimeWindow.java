@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeeklyTimeWindow implements Serializable, Cloneable {
@@ -52,18 +53,14 @@ public class WeeklyTimeWindow implements Serializable, Cloneable {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-
 		WeeklyTimeWindow that = (WeeklyTimeWindow) o;
-
-		if (minuteOfWeek != null ? !minuteOfWeek.equals(that.minuteOfWeek) : that.minuteOfWeek != null) return false;
-		return durationMins != null ? durationMins.equals(that.durationMins) : that.durationMins == null;
+		return Objects.equals(minuteOfWeek, that.minuteOfWeek) &&
+				Objects.equals(durationMins, that.durationMins);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = minuteOfWeek != null ? minuteOfWeek.hashCode() : 0;
-		result = 31 * result + (durationMins != null ? durationMins.hashCode() : 0);
-		return result;
+		return Objects.hash(minuteOfWeek, durationMins);
 	}
 
     @Override
