@@ -43,7 +43,17 @@ public class DateTimeWindow implements Serializable, Cloneable {
 
     /** Default constructor for JSON deserialization. */
     public DateTimeWindow() {}
-    
+
+    /** Start setter for JSON deserialization. */
+    public void setStart(Date start) {
+        this.start = start;
+    }
+
+    /** End setter for JSON deserialization. */
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
     @Override
 	public DateTimeWindow clone() {
     	return new DateTimeWindow(
